@@ -2,7 +2,7 @@ export type AllSchema = StrT | ObjT | ArrT | NumT;
 
 export type StrT = {
   type: "string";
-  email?: boolean;
+  email?: [boolean,string?];
   len?: number;
   max?: number;
   min?: number;

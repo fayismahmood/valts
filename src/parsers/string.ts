@@ -36,14 +36,18 @@ export let StringParser: Required<{
     };
   },
   email(t, v) {
-    if (
-      t &&
-      /^(?!\.)(?!.*\.\.)([A-Z0-9_+-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i.test(
-        v
+    if (t) {
+      let [is, msg] = t;
+      if (
+        t &&
+        /^(?!\.)(?!.*\.\.)([A-Z0-9_+-\.]*)[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i.test(
+          v
+        )
       )
-    )
-      return { status: true, type: "email" };
-    return { status: false, msg: `Invalid Email`, type: "email" };
+        return { status: true, type: "email" };
+      return { status: false, msg: msg || `Invalid Email`, type: "email" };
+    }
+    return { status: false, msg: "unexpected err" };
   },
   rgexp(t = "", v) {
     let _rg = RegExp(t);
