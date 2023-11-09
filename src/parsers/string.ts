@@ -44,7 +44,7 @@ export let StringRuleParser: Required<{
       status: false,
       msg: m || `Must Contain atleast ${v.length} letter(s)`,
       type: "min",
-      params: { len: v.length, expected: t },
+      params: { len: v.length, expected: p },
     };
   },
   max(t, v) {
@@ -55,7 +55,7 @@ export let StringRuleParser: Required<{
       status: false,
       msg: m || `Dont exceed more ${v.length} letter(s)`,
       type: "max",
-      params: { len: v.length, expected: t },
+      params: { len: v.length, expected: p },
     };
   },
   len(t, v) {
@@ -66,7 +66,7 @@ export let StringRuleParser: Required<{
       status: false,
       msg: m || `Must Contain ${v.length} letter(s)`,
       type: "len",
-      params: { len: v.length, expected: t },
+      params: { len: v.length, expected: p },
     };
   },
   email(t, v) {
@@ -79,7 +79,7 @@ export let StringRuleParser: Required<{
         )
       )
         return { status: true, type: "email" };
-      return { status: false, msg: `Invalid Email`, type: "email" };
+      return { status: false, msg: m||`Invalid Email`, type: "email" };
     }
     return { status: false, msg: "unexpected err" };
   },
@@ -88,6 +88,6 @@ export let StringRuleParser: Required<{
 
     let _rg = RegExp(p);
     if (_rg.test(v)) return { status: true, type: "rgexp" };
-    return { status: false, msg: `Regular Exp Err`, type: "rgexp" };
+    return { status: false, msg: m||`Regular Exp Err`, type: "rgexp" };
   },
 };
