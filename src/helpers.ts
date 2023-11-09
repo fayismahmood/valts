@@ -6,6 +6,9 @@ export type StrRules = {
   len?: number;
   max?: number;
   min?: number;
+  url?: boolean;
+  uuid?: boolean;
+  date?: [boolean, string?, string?];
   rgexp?: string;
 };
 export type NumRules = {

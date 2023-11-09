@@ -17,9 +17,9 @@ export let StringParser: Required<{
       let _val = e[_r];
       if (_val) {
         //@ts-ignore
-        let valid=_(_val, v);
-        if(valid.status==false){
-          errors.push(valid)
+        let valid = _(_val, v);
+        if (valid.status == false) {
+          errors.push(valid);
         }
       }
     });
@@ -79,15 +79,70 @@ export let StringRuleParser: Required<{
         )
       )
         return { status: true, type: "email" };
-      return { status: false, msg: m||`Invalid Email`, type: "email" };
+      return { status: false, msg: m || `Invalid Email`, type: "email" };
     }
     return { status: false, msg: "unexpected err" };
+  },
+  uuid(t, v) {
+    let [p = false, m] = t;
+    if (
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/.test(
+        v
+      )
+    )
+      return { status: true };
+
+    return { status: false, msg: m || `Invalid UUID`, type: "uuid" };
+  },
+  date(t, v) {
+    let [p, m] = t;
+    if (p) {
+      let [is = false, min, max] = p;
+      let _d = Date.parse(v);
+      if (is && (!Number.isNaN(_d))) {
+        if (min && _d < Date.parse(min)) {
+          return {
+            status: false,
+            msg: m || `min date is ${min}`,
+            type: "date",
+          };
+        }
+        if (max && _d > Date.parse(max)) {
+          return {
+            status: false,
+            msg: m || `max date is ${max}`,
+            type: "date",
+          };
+        }
+        return { status: true };
+      } else {
+        return { status: false, msg: m || `Invalid Date`, type: "date" };
+      }
+    } else {
+      return { status: false, msg: "unexpected err" };
+    }
+  },
+  url(t, v) {
+    let [p = false, m] = t;
+    function isValidUrl(s: string) {
+      try {
+        new URL(s);
+        return true;
+      } catch (err) {
+        return false;
+      }
+    }
+    if (p && isValidUrl(v)) {
+      return { status: true };
+    } else {
+      return { status: false, msg: m || `Regular Url Err`, type: "url" };
+    }
   },
   rgexp(t, v) {
     let [p = "", m] = t;
 
     let _rg = RegExp(p);
     if (_rg.test(v)) return { status: true, type: "rgexp" };
-    return { status: false, msg: m||`Regular Exp Err`, type: "rgexp" };
+    return { status: false, msg: m || `Regular Exp Err`, type: "rgexp" };
   },
 };
