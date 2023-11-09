@@ -1,5 +1,6 @@
 export type AllSchema = StrT | ObjT | ArrT | NumT;
 
+///////////////////RulesTypes
 export type StrRules = {
   email?: boolean;
   len?: number;
@@ -7,10 +8,18 @@ export type StrRules = {
   min?: number;
   rgexp?: string;
 };
+export type NumRules = {
+  len?: number;
+  max?: number;
+  min?: number;
+};
 
-
-
-
+export type ArrRules = {
+  min?: number;
+  max?: number;
+  len?: number;
+};
+///////////////////End-RulesTypes
 
 export type RuleArr<R> = { [k in keyof R]: [R[k], string?] }[];
 
@@ -19,11 +28,6 @@ export type StrT = {
   rules?: RuleArr<StrRules>;
 };
 
-export type NumRules = {
-  len?: number;
-  max?: number;
-  min?: number;
-};
 export type NumT = {
   type: "number";
   rules?: RuleArr<NumRules>;
@@ -34,17 +38,13 @@ export type ObjT = {
   keys: { [key: string]: AllSchema & { required?: boolean } };
 };
 
-export  type ArrRules = {
-  min?: number;
-  max?: number;
-  len?: number;
-};
 export type ArrT = {
   type: "array";
   elm: AllSchema;
   rules?: RuleArr<ArrRules>;
 };
 
+/////////////////////////Functions to convert into schema by functions
 export function Arr<T extends AllSchema>(
   t: Omit<ArrT, "type"> & {
     elm: T;
@@ -80,6 +80,12 @@ export function Obj<
     keys,
   };
 }
+
+/////////////////////////End--------------Functions to convert into schema by functions
+
+//------------------------------------------------------------------------------------//
+// typescript infer Generics      //////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 type req<R extends object, K extends keyof R> = Pick<Required<R>, K> &
   Partial<R>;
 type ValueOf<T> = T[keyof T];

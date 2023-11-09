@@ -2,16 +2,17 @@
 import { expect, test } from "vitest";
 import { Arr, Num, Obj, Str } from "../src/helpers";
 import { Validate } from "../src/parse";
+import { email, max } from "../src/rules";
 
 test("TestString Status True", () => {
-  let StringSchema = Str({ rules: [{ email: [true, "asfasfasfsf"] }] });
+  let StringSchema = Str({ rules: [email("asfasfasfsf")] });
   expect(Validate(StringSchema, "asdf@sfasf.asf")).toStrictEqual({
     status: true,
   });
 });
 
 test("TestString Status False", () => {
-  let StringSchema = Str({ rules: [{ email: [true, "asfasfasfsf"] }] });
+  let StringSchema = Str({ rules: [email("asfasfasfsf")] });
   expect(Validate(StringSchema, "asdffasf.asf")).toStrictEqual({
     status: false,
     msg: "rule err",
@@ -21,14 +22,14 @@ test("TestString Status False", () => {
 });
 
 test("Test Number Status True", () => {
-  let NumSchema = Num({ rules: [{ max: [50, "exceed more than 50"] }] });
+  let NumSchema = Num({ rules: [max(50)] });
   expect(Validate(NumSchema, 35)).toStrictEqual({
     status: true,
   });
 });
 
 test("Test Number Status False", () => {
-  let NumSchema = Num({ rules: [{ max: [50, "exceed more than 50"] }] });
+  let NumSchema = Num({ rules: [max(50, "exceed more than 50")] });
   expect(Validate(NumSchema, 85)).toStrictEqual({
     status: false,
     msg: "rule err",
