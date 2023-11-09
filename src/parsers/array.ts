@@ -1,4 +1,4 @@
-import { AllSchema, ArrT, inferData } from "../helpers";
+import { AllSchema, ArrRules, ArrT, inferData } from "../helpers";
 import { ParsedResult, Validate } from "../parse";
 
 export let ArrayParser: Required<{
@@ -32,16 +32,54 @@ export let ArrayParser: Required<{
       return { status: true };
     }
   },
+  rules(t, v) {
+    let errors: ParsedResult[] = [];
+
+    t?.forEach((e) => {
+      let _r = Object.keys(e)[0] as keyof ArrRules;
+      let _ = ArrayRuleParser[_r];
+      let _val = e[_r];
+      if (_val) {
+        //@ts-ignore
+        let valid = _(_val, v);
+        if (valid.status == false) {
+          errors.push(valid);
+        }
+      }
+    });
+    if (errors.length > 0) {
+      return { status: false, msg: "rule err", errors, type: "rules" };
+    } else {
+      return { status: true };
+    }
+  },
+};
+
+export let ArrayRuleParser: Required<{
+  [k in keyof ArrRules]: (
+    t: [Required<ArrRules[k]>, string?],
+    v: inferData<AllSchema>[]
+  ) => ParsedResult;
+}> = {
   len(t, v) {
-    if (v.length == t) return { status: true };
-    return { status: false, type: "len", msg: `Invalid length required ${t}` };
+    let [p, m] = t;
+    if (v.length == p) return { status: true };
+    return {
+      status: false,
+      type: "len",
+      msg: m || `Invalid length required ${p}`,
+    };
   },
-  max(t = 10, v) {
-    if (v.length < t) return { status: true };
-    return { status: false, type: "max", msg: `Invalid length required ${t}` };
+  max(t, v) {
+    let [p = 10, m] = t;
+
+    if (v.length < p) return { status: true };
+    return { status: false, type: "max", msg: m||`Invalid length required ${p}` };
   },
-  min(t = 0, v) {
-    if (v.length > t) return { status: true };
-    return { status: false, type: "min", msg: `Invalid length required ${t}` };
+  min(t, v) {
+    let [p = 0, m] = t;
+
+    if (v.length > p) return { status: true };
+    return { status: false, type: "min", msg: `Invalid length required ${p}` };
   },
 };

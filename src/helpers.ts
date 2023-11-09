@@ -1,19 +1,32 @@
 export type AllSchema = StrT | ObjT | ArrT | NumT;
 
-export type StrT = {
-  type: "string";
-  email?: [boolean,string?];
+export type StrRules = {
+  email?: boolean;
   len?: number;
   max?: number;
   min?: number;
   rgexp?: string;
 };
 
-export type NumT = {
-  type: "number";
+
+
+
+
+export type RuleArr<R> = { [k in keyof R]: [R[k], string?] }[];
+
+export type StrT = {
+  type: "string";
+  rules?: RuleArr<StrRules>;
+};
+
+export type NumRules = {
   len?: number;
   max?: number;
   min?: number;
+};
+export type NumT = {
+  type: "number";
+  rules?: RuleArr<NumRules>;
 };
 
 export type ObjT = {
@@ -21,29 +34,42 @@ export type ObjT = {
   keys: { [key: string]: AllSchema & { required?: boolean } };
 };
 
-export type ArrT = {
-  type: "array";
-  elm: AllSchema;
+export  type ArrRules = {
   min?: number;
   max?: number;
   len?: number;
 };
+export type ArrT = {
+  type: "array";
+  elm: AllSchema;
+  rules?: RuleArr<ArrRules>;
+};
 
-export function Arr<T extends AllSchema>(t: Omit<ArrT,"type"> & { elm: T }): ArrT & { elm: T } {
+export function Arr<T extends AllSchema>(
+  t: Omit<ArrT, "type"> & {
+    elm: T;
+    rules?: RuleArr<ArrRules>;
+  }
+): ArrT & {
+  elm: T;
+  rules?: RuleArr<ArrRules>;
+} {
   return {
     type: "array",
-    ...t
+    ...t,
   };
 }
-export function Str(t?: Omit<StrT,"type">): StrT {
-  return { type: "string", ...t};
+export function Str(t?: Omit<StrT, "type">): StrT {
+  return { type: "string", ...t };
 }
 
-export function Num(t: Omit<NumT,"type">): NumT {
+export function Num(t: Omit<NumT, "type">): NumT {
   return { type: "number", ...t };
 }
 
-export function Obj<T extends { [key: string]: AllSchema & { required?: boolean } }>(
+export function Obj<
+  T extends { [key: string]: AllSchema & { required?: boolean } }
+>(
   keys: T
 ): {
   type: "object";
