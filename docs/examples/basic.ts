@@ -1,4 +1,4 @@
-import { Obj, Str, Validate } from "../../src";
+import { Obj, Str, Validate,inferData } from "../../src";
 import { email, min } from "../../src";
 
 let schema = Obj({
@@ -11,3 +11,6 @@ let validate=Validate(schema,{name:"adfdaf",email:"adfsd@dsdf.cdf"})
 let validate2=Validate(schema,{name:"adf",email:"adfsd@dsdf.cdf"})
 // {"status":false,"errors":{"name":{"status":false,"msg":"rule err","errors":[{"status":false,"msg":"Must Contain atleast 3 letter(s)","type":"min","params":{"len":3,"expected":4}}],"type":"rules"}},"msg":"Invalid object properties"}
  
+type typ=inferData<typeof schema>
+let h:typ={}
+//  ^?
